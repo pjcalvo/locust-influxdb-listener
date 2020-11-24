@@ -1,2 +1,0 @@
-influxdb==5.3.1
-locust==1.4.1

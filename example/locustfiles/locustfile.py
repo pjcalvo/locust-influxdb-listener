@@ -1,6 +1,6 @@
 from locust import between, events, tag, task, HttpUser
 
-from libs.influxdb_listener import InfluxDBSettings, InfluxDBListener
+from locust_influxdb_listener import InfluxDBListener, InfluxDBSettings
 
 
 @events.init.add_listener

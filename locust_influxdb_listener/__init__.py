@@ -10,9 +10,6 @@ from locust.exception import InterruptTaskSet
 import locust.env
 
 
-
-
-
 log = logging.getLogger('locust_influx')
 class InfluxDBSettings:
     """
