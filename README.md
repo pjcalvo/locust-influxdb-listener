@@ -41,7 +41,7 @@ def on_locust_init(environment, **_kwargs):
 
 ### Example
 
-You can find a working example under the `[examples folder](https://github.com/hoodoo-digital/locust-influxdb-listener/blob/main/example)`
+You can find a working example under the [examples folder](https://github.com/hoodoo-digital/locust-influxdb-listener/blob/main/example)
 
 *InfluxDB with Grafana*
 
