@@ -4,7 +4,7 @@ Package that uses locust 'event' hooks to push locust related events to an influ
 
 ## Installation
 
-Install using your favourite package installer:
+Install using your favorite package installer:
 
 ```bash
 pip install locust-influxdb-listener
@@ -45,7 +45,6 @@ You can find a working example under the [examples folder](https://github.com/ho
 
 *InfluxDB with Grafana*
 
-
 We have included a working example `docker-compose.yml` file that can be used to spin a reporting setup in case you don't have one.
 
 (Make sure you have `docker` and `docker-compose` installed and just run:
@@ -65,5 +64,4 @@ Once grafana is running (by default on port: 3000) `https://localhost:3000` , yo
 
 * Import a new dashboard. We have provided a custom dashboard for you `locust-grafana-dashboard.json` that just works out of the box with the locust-events that the listener will emmit.
 
-
-![Granfa Example](https://github.com/hoodoo-digital/locust-influxdb-listener/blob/main/example/grafana.png)
+![Grafa Example](https://i.ibb.co/p2kbzZk/grafana.png)

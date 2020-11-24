@@ -7,7 +7,7 @@ setuptools.setup(
     name="locust_influxdb_listener", # Replace with your own username
     version="0.0.3",
     author="Pablo Calvo",
-    author_email="pablo@gmail.=com",
+    author_email="pjcalvov@gmail.com",
     description="Locust.io 1.X influxdb listener",
     long_description=long_description,
     long_description_content_type="text/markdown",
