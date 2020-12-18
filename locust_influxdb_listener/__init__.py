@@ -7,6 +7,7 @@ from datetime import datetime
 
 from influxdb import InfluxDBClient
 from locust.exception import InterruptTaskSet
+from requests.exceptions import HTTPError
 import locust.env
 
 
@@ -146,6 +147,10 @@ class InfluxDBListener:
             'success': success,
             'exception': repr(exception),
         }
+
+        if isinstance(exception, HTTPError):
+            tags['code'] = exception.response.status_code
+
         fields = {
             'response_time': response_time,
             'response_length': response_length,
