@@ -45,6 +45,7 @@ class InfluxDBListener:
     ):
 
         # flush related attributes
+        self.env = env
         self.cache = []
         self.stop_flag = False
         self.interval_ms = influxDbSettings.interval_ms
@@ -154,7 +155,7 @@ class InfluxDBListener:
         fields = {
             'response_time': response_time,
             'response_length': response_length,
-            'counter': 1,  # TODO: Review the need of this field
+            'counter': self.env.stats.num_requests,  # TODO: Review the need of this field
         }
         point = self.__make_data_point(measurement, tags, fields, time)
         self.cache.append(point)
