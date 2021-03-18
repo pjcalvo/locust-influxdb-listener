@@ -10,6 +10,7 @@ services:
       - "8086:8086"
       - "2003:2003"
     environment:
+      INFLUXDB_DB: "test-project"
       INFLUXDB_ADMIN_USER: admin
       INFLUXDB_ADMIN_PASSWORD: pass
       INFLUXDB_HTTP_AUTH_ENABLED: "false"
@@ -22,11 +23,14 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    environment:
+      GF_PATHS_PROVISIONING: "/grafana/provisioning"
     user: "0"
     links:
       - influxdb
     volumes:
       - /var/lib/docker/volumes:/var/lib/grafana
+      - ./grafana:/grafana
 
   chronograf:
       image: chronograf:latest

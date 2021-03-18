@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: "InfluxDB"
+    type: "influxdb"
+    access: "proxy"
+    orgId: 1
+    url: "http://influxdb:8086"
+    user: "admin"
+    password: "pass"
+    database: "test-project"
+    basicAuth: false
+    isDefault: true
+    readOnly: false
+    jsonData:
+      httpMode: POST

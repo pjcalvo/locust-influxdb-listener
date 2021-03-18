@@ -38,19 +38,17 @@ The before command utilizes the `locust.conf` file to determine the test file an
 
 We have included a `docker-compose.yml` file that can be used to spin a reporting setup in case you don't have one.
 
-(Make sure you have `docker` and `docker-compose` installed and just run:
+Make sure you have `docker` and `docker-compose` installed and just run:
 
 ```bash
 docker-compose up
 ```
 
 ### Configuration
+All is automatically setup at runtime in the docker-compose.yml. You could add additional dashboards in the `example/grafana/dashboards/` folder.
 
-Once grafana is running (by default on port: 3000) `https://localhost:3000` , you need to:
+### Use
+Once grafana container is running (by default on port: 3000), open the following link: https://localhost:3000.
 
-* Connect to influxdb as the datasource:
-  * Host: https://influxdb:8086
-  * User: admin
-  * Password: pass
+We have provided a custom dashboard for you `example/grafana/dashboards/locust-grafana-dashboard.json` that just works out of the box with the locust-events that the listener will emmit.
 
-* Import a new dashboard. We have provided a custom dashboard for you `locust-grafana-dashboard.json` that just works out of the box with the locust-events that the listener will emmit.
