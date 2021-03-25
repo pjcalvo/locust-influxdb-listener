@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: Dashboards
+    org_id: 1
+    folder: ''
+    type: 'file'
+    options:
+      path: '/grafana/dashboards/'
