@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="locust_influxdb_listener", # Replace with your own username
-    version="0.0.4",
+    version="0.0.5",
     author="Pablo Calvo",
     author_email="pjcalvov@gmail.com",
     description="Locust.io 1.X influxdb listener",

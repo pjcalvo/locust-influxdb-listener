@@ -54,8 +54,8 @@ class InfluxDBListener:
             self.influxdb_client = InfluxDBClient(influxDbSettings.influx_host, influxDbSettings.influx_port, influxDbSettings.user, influxDbSettings.pwd, influxDbSettings.database)
             self.influxdb_client.create_database(influxDbSettings.database)
         except:
-           logging.exception('Could not connect to influxdb')
-           return 
+            logging.error('Could not connect to influxdb.')
+            return
 
         # determine if worker or master
         self.node_id = 'local'
