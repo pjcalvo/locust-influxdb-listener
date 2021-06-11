@@ -35,7 +35,10 @@ def on_locust_init(environment, **_kwargs):
         database = 'test-project'
     )
     # start listerner with the given configuration
-    InfluxDBListener(env=environment, influxDbSettings=influxDBSettings)
+    influx_listener = InfluxDBListener(env=environment, influxDbSettings=influxDBSettings)
+    
+    # Use influx_listener.connected parameters to determine if connection is made 
+    # and listeners are set. 
 ...
 ```
 

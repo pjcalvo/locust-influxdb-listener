@@ -45,6 +45,7 @@ class InfluxDBListener:
     ):
 
         # flush related attributes
+        self.connected = False
         self.env = env
         self.cache = []
         self.stop_flag = False
@@ -53,8 +54,10 @@ class InfluxDBListener:
         try:
             self.influxdb_client = InfluxDBClient(influxDbSettings.influx_host, influxDbSettings.influx_port, influxDbSettings.user, influxDbSettings.pwd, influxDbSettings.database)
             self.influxdb_client.create_database(influxDbSettings.database)
+            self.connected = True
         except:
             logging.error('Could not connect to influxdb.')
+            self.connected = False
             return
 
         # determine if worker or master
