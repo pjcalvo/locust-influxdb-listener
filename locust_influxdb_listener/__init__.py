@@ -26,7 +26,8 @@ class InfluxDBSettings:
         database: str = 'default',
         interval_ms: int = 1000,
         ssl: bool = False,
-        verify_ssl: bool = False
+        verify_ssl: bool = False,
+        create_database: bool = False
     ):
         self.influx_host = influx_host
         self.influx_port = influx_port
@@ -36,6 +37,7 @@ class InfluxDBSettings:
         self.interval_ms = interval_ms
         self.ssl = ssl
         self.verify_ssl = verify_ssl
+        self.create_database = create_database
         
 
 class InfluxDBListener: 
@@ -65,7 +67,8 @@ class InfluxDBListener:
                 ssl=influxDbSettings.ssl,
                 verify_ssl=influxDbSettings.verify_ssl
             )
-            self.influxdb_client.create_database(influxDbSettings.database)
+            if influxDbSettings.create_database:
+                self.influxdb_client.create_database(influxDbSettings.database)
         except:
             logging.error('Could not connect to influxdb.')
             return
