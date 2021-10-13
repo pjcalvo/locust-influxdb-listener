@@ -25,7 +25,8 @@ class InfluxDBSettings:
         pwd: str = 'pass',
         database: str = 'default',
         interval_ms: int = 1000,
-        ssl: bool = False
+        ssl: bool = False,
+        verify_ssl: bool = False
     ):
         self.influx_host = influx_host
         self.influx_port = influx_port
@@ -34,6 +35,7 @@ class InfluxDBSettings:
         self.database = database
         self.interval_ms = interval_ms
         self.ssl = ssl
+        self.verify_ssl = verify_ssl
         
 
 class InfluxDBListener: 
@@ -60,7 +62,8 @@ class InfluxDBListener:
                 username=influxDbSettings.user,
                 password=influxDbSettings.pwd,
                 database=influxDbSettings.database,
-                ssl=influxDbSettings.ssl
+                ssl=influxDbSettings.ssl,
+                verify_ssl=influxDbSettings.verify_ssl
             )
             self.influxdb_client.create_database(influxDbSettings.database)
         except:
