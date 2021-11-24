@@ -10,8 +10,9 @@ from locust.exception import InterruptTaskSet
 from requests.exceptions import HTTPError
 import locust.env
 
-
 log = logging.getLogger('locust_influx')
+
+
 class InfluxDBSettings:
     """
     Store influxdb settings
@@ -21,9 +22,12 @@ class InfluxDBSettings:
         influx_host: str = 'localhost', 
         influx_port: int = 8086, 
         user: str = 'admin', 
-        pwd:str = 'pass', 
+        pwd: str = 'pass',
         database: str = 'default',
-        interval_ms: int = 1000
+        interval_ms: int = 1000,
+        ssl: bool = False,
+        verify_ssl: bool = False,
+        create_database: bool = False
     ):
         self.influx_host = influx_host
         self.influx_port = influx_port
@@ -31,6 +35,9 @@ class InfluxDBSettings:
         self.pwd = pwd
         self.database = database
         self.interval_ms = interval_ms
+        self.ssl = ssl
+        self.verify_ssl = verify_ssl
+        self.create_database = create_database
         
 
 class InfluxDBListener: 
@@ -51,8 +58,17 @@ class InfluxDBListener:
         self.interval_ms = influxDbSettings.interval_ms
         # influxdb settings 
         try:
-            self.influxdb_client = InfluxDBClient(influxDbSettings.influx_host, influxDbSettings.influx_port, influxDbSettings.user, influxDbSettings.pwd, influxDbSettings.database)
-            self.influxdb_client.create_database(influxDbSettings.database)
+            self.influxdb_client = InfluxDBClient(
+                host=influxDbSettings.influx_host,
+                port=influxDbSettings.influx_port,
+                username=influxDbSettings.user,
+                password=influxDbSettings.pwd,
+                database=influxDbSettings.database,
+                ssl=influxDbSettings.ssl,
+                verify_ssl=influxDbSettings.verify_ssl
+            )
+            if influxDbSettings.create_database:
+                self.influxdb_client.create_database(influxDbSettings.database)
         except:
             logging.error('Could not connect to influxdb.')
             return
@@ -126,8 +142,8 @@ class InfluxDBListener:
         point = self.__make_data_point('locust_events', tags, fields, time)
         self.cache.append(point)
 
-
-    def __listen_for_requests_events(self, node_id, measurement, request_type, name, response_time, response_length, success, exception) -> None:
+    def __listen_for_requests_events(self, node_id, measurement, request_type, name,
+                                     response_time, response_length, success, exception) -> None:
         """
         Persist request information to influxdb.
 
@@ -156,7 +172,7 @@ class InfluxDBListener:
         point = self.__make_data_point(measurement, tags, fields, time)
         self.cache.append(point)
 
-    def __listen_for_locust_errors(self, node_id, user_instance, exception: Exception = None, tb = None) -> None:
+    def __listen_for_locust_errors(self, node_id, user_instance, exception: Exception = None, tb=None) -> None:
         """
         Persist locust errors to InfluxDB.
 
