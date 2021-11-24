@@ -10,7 +10,7 @@ services:
       - "8086:8086"
       - "2003:2003"
     environment:
-      INFLUXDB_DB: "test-project"
+      INFLUXDB_DB: "testproject"
       INFLUXDB_ADMIN_USER: admin
       INFLUXDB_ADMIN_PASSWORD: pass
       INFLUXDB_HTTP_AUTH_ENABLED: "false"

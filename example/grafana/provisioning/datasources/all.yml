@@ -8,7 +8,7 @@ datasources:
     url: "http://influxdb:8086"
     user: "admin"
     password: "pass"
-    database: "test-project"
+    database: "testproject"
     basicAuth: false
     isDefault: true
     readOnly: false

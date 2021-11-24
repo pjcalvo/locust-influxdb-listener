@@ -1,0 +1,8 @@
+#build
+python3 -m build
+
+#update twine
+python3 -m pip install --user --upgrade twine
+
+#upload to pypi
+python3 -m twine upload --repository pypi dist/*
