@@ -17,18 +17,17 @@ class InfluxDBSettings:
     """
     Store influxdb settings
     """
-
     def __init__(
-            self,
-            influx_host: str = 'localhost',
-            influx_port: int = 8086,
-            user: str = 'admin',
-            pwd: str = 'pass',
-            database: str = 'default',
-            interval_ms: int = 1000,
-            ssl: bool = False,
-            verify_ssl: bool = False,
-            create_database: bool = False
+        self, 
+        influx_host: str = 'localhost', 
+        influx_port: int = 8086, 
+        user: str = 'admin', 
+        pwd: str = 'pass',
+        database: str = 'default',
+        interval_ms: int = 1000,
+        ssl: bool = False,
+        verify_ssl: bool = False,
+        create_database: bool = False
     ):
         self.influx_host = influx_host
         self.influx_port = influx_port
@@ -39,17 +38,17 @@ class InfluxDBSettings:
         self.ssl = ssl
         self.verify_ssl = verify_ssl
         self.create_database = create_database
+        
 
-
-class InfluxDBListener:
+class InfluxDBListener: 
     """
     Events listener that writes locust events to the given influxdb connection
     """
-
+    
     def __init__(
-            self,
-            env: locust.env.Environment,
-            influxDbSettings: InfluxDBSettings
+        self,
+        env: locust.env.Environment,
+        influxDbSettings: InfluxDBSettings
     ):
 
         # flush related attributes
@@ -57,7 +56,7 @@ class InfluxDBListener:
         self.cache = []
         self.stop_flag = False
         self.interval_ms = influxDbSettings.interval_ms
-        # influxdb settings
+        # influxdb settings 
         try:
             self.influxdb_client = InfluxDBClient(
                 host=influxDbSettings.influx_host,
@@ -85,12 +84,12 @@ class InfluxDBListener:
         # start background event to push data to influx
         self.flush_worker = gevent.spawn(self.__flush_cached_points_worker)
         self.test_start(0)
-
+        
         events = env.events
-
+        
         # requests
         events.request.add_listener(self.request)
-        # events
+        # events   
         events.test_stop.add_listener(self.test_stop)
         events.user_error.add_listener(self.user_error)
         events.spawning_complete.add_listener(self.spawning_complete)
@@ -113,7 +112,7 @@ class InfluxDBListener:
 
     def test_stop(self, user_count=None, environment=None) -> None:
         self.__register_event(self.node_id, 0, 'test_stopped')
-
+    
     def user_error(self, user_instance, exception, tb, **_kwargs) -> None:
         self.__listen_for_locust_errors(self.node_id, user_instance, exception, tb)
 
@@ -121,8 +120,7 @@ class InfluxDBListener:
         self.__register_event(self.node_id, 0, 'quitting')
         self.last_flush_on_quitting()
 
-    def __register_event(self, node_id: str, user_count: int, event: str,
-                         **_kwargs) -> None:
+    def __register_event(self, node_id: str, user_count: int, event: str, **_kwargs) -> None:
         """
         Persist locust event such as hatching started or stopped to influxdb.
         Append user_count in case that it exists
@@ -172,14 +170,12 @@ class InfluxDBListener:
         fields = {
             'response_time': response_time,
             'response_length': response_length,
-            'counter': self.env.stats.num_requests,
-            # TODO: Review the need of this field
+            'counter': self.env.stats.num_requests,  # TODO: Review the need of this field
         }
         point = self.__make_data_point(measurement, tags, fields, time)
         self.cache.append(point)
 
-    def __listen_for_locust_errors(self, node_id, user_instance,
-                                   exception: Exception = None, tb=None) -> None:
+    def __listen_for_locust_errors(self, node_id, user_instance, exception: Exception = None, tb=None) -> None:
         """
         Persist locust errors to InfluxDB.
         :param node_id: The id of the node reporting the error.
@@ -199,6 +195,7 @@ class InfluxDBListener:
         point = self.__make_data_point('locust_exceptions', tags, fields, time)
         self.cache.append(point)
 
+
     def __flush_cached_points_worker(self) -> None:
         """
         Background job that puts the points into the cache to be flushed according tot he interval defined.
@@ -211,8 +208,7 @@ class InfluxDBListener:
             self.__flush_points(self.influxdb_client)
             gevent.sleep(self.interval_ms / 1000)
 
-    def __make_data_point(self, measurement: str, tags: dict, fields: dict,
-                          time: datetime) -> dict:
+    def __make_data_point(self, measurement: str, tags: dict, fields: dict, time: datetime) -> dict:
         """
         Create a list with a single point to be saved to influxdb.
         :param measurement: The measurement where to save this point.
@@ -220,13 +216,14 @@ class InfluxDBListener:
         :param fields: Dictionary of field to be saved to measurement.
         :param time: The time os this point.
         """
-        return {"measurement": measurement, "tags": tags, "time": time,
-                "fields": fields}
+        return {"measurement": measurement, "tags": tags, "time": time, "fields": fields}
+
 
     def last_flush_on_quitting(self):
         self.stop_flag = True
         self.flush_worker.join()
         self.__flush_points(self.influxdb_client)
+
 
     def __flush_points(self, influxdb_client: InfluxDBClient) -> None:
         """
