@@ -126,7 +126,6 @@ class InfluxDBListener:
         """
         Persist locust event such as hatching started or stopped to influxdb.
         Append user_count in case that it exists
-
         :param node_id: The id of the node reporting the event.
         :param event: The event name or description.
         """
@@ -148,16 +147,15 @@ class InfluxDBListener:
                                      context, exception, start_time, url) -> None:
         """
         Persist request information to influxdb.
-
         :param node_id: The id of the node reporting the event.
         :param measurement: The measurement where to save this point.
         """
 
         time = datetime.utcnow()
+        was_successful = True
         if response:
+            # override with response code
             was_successful = 199 < response.status_code < 400
-        else:
-            was_successful = True
         tags = {
             'node_id': node_id,
             'request_type': request_type,
@@ -184,7 +182,6 @@ class InfluxDBListener:
                                    exception: Exception = None, tb=None) -> None:
         """
         Persist locust errors to InfluxDB.
-
         :param node_id: The id of the node reporting the error.
         :return: None
         """
@@ -205,7 +202,6 @@ class InfluxDBListener:
     def __flush_cached_points_worker(self) -> None:
         """
         Background job that puts the points into the cache to be flushed according tot he interval defined.
-
         :param influxdb_client:
         :param interval:
         :return: None
@@ -219,7 +215,6 @@ class InfluxDBListener:
                           time: datetime) -> dict:
         """
         Create a list with a single point to be saved to influxdb.
-
         :param measurement: The measurement where to save this point.
         :param tags: Dictionary of tags to be saved in the measurement.
         :param fields: Dictionary of field to be saved to measurement.
@@ -236,7 +231,6 @@ class InfluxDBListener:
     def __flush_points(self, influxdb_client: InfluxDBClient) -> None:
         """
         Write the cached data points to influxdb
-
         :param influxdb_client: An instance of InfluxDBClient
         :return: None
         """
