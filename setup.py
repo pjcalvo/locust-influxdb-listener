@@ -19,7 +19,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'locust>=2.8.0',
+        'locust>=1.5.0',
         'influxdb>=5.2.2',
     ],
     python_requires='>=3.6',
