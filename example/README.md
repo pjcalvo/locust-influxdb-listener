@@ -1,6 +1,6 @@
 # locust-influxdb-boilerplate
 
-LocustIO base project with a custom influxDB listener.
+LocustIO base project with a custom influxDB listener. This package requires Locust v1.5.0 or greater.
 
 ## Instructions
 
