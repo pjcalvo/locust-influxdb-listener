@@ -2,6 +2,10 @@
 
 Package that uses locust 'event' hooks to push locust related events to an influxDB database.
 
+## Prerequisites
+
+This package requires locustIO v1.5.0 or greater.
+
 ## Installation
 
 Install using your favorite package installer:
