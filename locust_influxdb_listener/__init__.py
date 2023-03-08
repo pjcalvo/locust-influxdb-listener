@@ -171,6 +171,7 @@ class InfluxDBListener:
             'response_time': response_time,
             'response_length': response_length,
             'counter': self.env.stats.num_requests,  # TODO: Review the need of this field
+            'user_count': self.env.runner.user_count
         }
         point = self.__make_data_point(measurement, tags, fields, time)
         self.cache.append(point)
