@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="locust_influxdb_listener", # Replace with your own username
-    version="0.0.8",
+    version="0.0.9",
     author="Pablo Calvo",
     author_email="pjcalvov@gmail.com",
     description="Locust.io 1.X influxdb listener",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/hoodoo-digital/locust_influxdb_listener",
+    url="https://github.com/pjcalvo/locust-influxdb-listener",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
