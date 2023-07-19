@@ -46,6 +46,7 @@ class InfluxDBListener:
     """
     Events listener that writes locust events to the given influxdb connection
     """
+    tags : dict
     
     def __init__(
         self,
@@ -132,8 +133,7 @@ class InfluxDBListener:
         """
 
         time = datetime.utcnow()
-        tags = {
-        }
+        tags = self.tags
         fields = {
             'node_id': node_id,
             'event': event,
@@ -187,9 +187,7 @@ class InfluxDBListener:
         """
 
         time = datetime.utcnow()
-        tags = {
-            'exception_tag': repr(exception)
-        }
+        tags = {**{'exception_tag': repr(exception)}, **self.tags}
         fields = {
             'node_id': node_id,
             'user_instance': repr(user_instance),
