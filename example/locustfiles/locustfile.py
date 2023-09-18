@@ -44,7 +44,7 @@ class TestWebUser(HttpUser):
             if 'native nicaraguan' not in response.text:
                 response.failure("Expected text was not displayed")
             
-    # method
+    # method that runs once per spawned user. Useful for setting up test data or attributes
     def on_start(self):
         print('New user was spawned')
        
