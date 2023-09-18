@@ -1,3 +1,5 @@
+from typing import Optional, Dict
+
 import atexit
 import gevent
 import logging
@@ -6,40 +8,52 @@ import traceback
 from datetime import datetime
 
 from influxdb import InfluxDBClient
-from locust.exception import InterruptTaskSet
 from requests.exceptions import HTTPError
 import locust.env
+from urllib3 import HTTPConnectionPool
 
-log = logging.getLogger('locust_influx')
+log = logging.getLogger('locust_influxdb_listener')
 
 
 class InfluxDBSettings:
     """
-    Store influxdb settings
+    Store InfluxDB settings for a data connection.
     """
+
     def __init__(
         self, 
-        influx_host: str = 'localhost', 
-        influx_port: int = 8086, 
+        host: str = 'localhost', 
+        port: int = 8086, 
         user: str = 'admin', 
         pwd: str = 'pass',
         database: str = 'default',
         interval_ms: int = 1000,
         ssl: bool = False,
         verify_ssl: bool = False,
-        create_database: bool = False,
-        tags: dict = {}
+        additional_tags: dict = {},
     ):
-        self.influx_host = influx_host
-        self.influx_port = influx_port
+        """
+        Initialize the InfluxDBSettings object with provided or default settings.
+
+        :param host: InfluxDB host address or hostname.
+        :param port: InfluxDB HTTP API port.
+        :param user: InfluxDB username for authentication.
+        :param pwd: InfluxDB password for authentication.
+        :param database: InfluxDB database name for storing data.
+        :param interval_ms: Data sending interval in milliseconds.
+        :param ssl: Enable SSL/TLS for secure data transmission.
+        :param verify_ssl: Verify SSL certificates (only if SSL is enabled).
+        :param additional_tags: Additional tags to include in global data points.
+        """
+        self.host = host  # Renamed from influx_host
+        self.port = port  # Renamed from influx_port
         self.user = user
         self.pwd = pwd
         self.database = database
         self.interval_ms = interval_ms
         self.ssl = ssl
         self.verify_ssl = verify_ssl
-        self.create_database = create_database
-        self.tags = tags
+        self.additional_tags = additional_tags
         
 
 class InfluxDBListener: 
@@ -53,28 +67,35 @@ class InfluxDBListener:
         env: locust.env.Environment,
         influxDbSettings: InfluxDBSettings
     ):
+        """
+        Initialize the InfluxDBListener with the provided Locust environment and InfluxDB settings.
 
-        # flush related attributes
+        :param env: The Locust environment to listen for events in.
+        :param influxDbSettings: Settings for the InfluxDB connection.
+        """
+         
         self.env = env
         self.cache = []
         self.stop_flag = False
         self.interval_ms = influxDbSettings.interval_ms
-        self.tags = influxDbSettings.tags
+        self.additional_tags = influxDbSettings.additional_tags
         # influxdb settings 
         try:
+            # try to connect create the database and switch to it
             self.influxdb_client = InfluxDBClient(
-                host=influxDbSettings.influx_host,
-                port=influxDbSettings.influx_port,
+                host=influxDbSettings.host,
+                port=influxDbSettings.port,
                 username=influxDbSettings.user,
                 password=influxDbSettings.pwd,
-                database=influxDbSettings.database,
                 ssl=influxDbSettings.ssl,
                 verify_ssl=influxDbSettings.verify_ssl
             )
-            if influxDbSettings.create_database:
-                self.influxdb_client.create_database(influxDbSettings.database)
-        except:
-            logging.error('Could not connect to influxdb.')
+            # database is mandatory so we should always try to create it
+            self.influxdb_client.create_database(influxDbSettings.database)
+            self.influxdb_client.switch_database(influxDbSettings.database)
+            
+        except Exception as ex:
+            logging.error(f'Unexpected error: {ex}')
             return
 
         # determine if worker or master
@@ -133,14 +154,13 @@ class InfluxDBListener:
         """
 
         time = datetime.utcnow()
-        tags = self.tags
         fields = {
             'node_id': node_id,
             'event': event,
             'user_count': user_count
         }
 
-        point = self.__make_data_point('locust_events', tags, fields, time)
+        point = self.__make_data_point('locust_events', fields, time)
         self.cache.append(point)
 
     def __listen_for_requests_events(self, node_id, measurement, request_type, name,
@@ -154,9 +174,8 @@ class InfluxDBListener:
 
         time = datetime.utcnow()
         was_successful = True
-        if response:
-            # override with response code
-            was_successful = 199 < response.status_code < 400
+        if response is not None:
+            was_successful = (199 < response.status_code < 400) and exception is None            
         tags = {
             'node_id': node_id,
             'request_type': request_type,
@@ -176,7 +195,7 @@ class InfluxDBListener:
             'counter': self.env.stats.num_requests,  # TODO: Review the need of this field
             'user_count': self.env.runner.user_count
         }
-        point = self.__make_data_point(measurement, tags, fields, time)
+        point = self.__make_data_point(measurement, fields, time, tags=tags)
         self.cache.append(point)
 
     def __listen_for_locust_errors(self, node_id, user_instance, exception: Exception = None, tb=None) -> None:
@@ -194,7 +213,7 @@ class InfluxDBListener:
             'exception': repr(exception),
             'traceback': "".join(traceback.format_tb(tb)),
         }
-        point = self.__make_data_point('locust_exceptions', tags, fields, time)
+        point = self.__make_data_point('locust_exceptions', fields, time, tags=tags)
         self.cache.append(point)
 
 
@@ -210,15 +229,15 @@ class InfluxDBListener:
             self.__flush_points(self.influxdb_client)
             gevent.sleep(self.interval_ms / 1000)
 
-    def __make_data_point(self, measurement: str, tags: dict, fields: dict, time: datetime) -> dict:
+    def __make_data_point(self, measurement: str, fields: dict, time: datetime, tags: Optional[Dict[str,str]] = {}) -> dict:
         """
         Create a list with a single point to be saved to influxdb.
         :param measurement: The measurement where to save this point.
-        :param tags: Dictionary of tags to be saved in the measurement.
         :param fields: Dictionary of field to be saved to measurement.
         :param time: The time os this point.
+        :param tags: Dictionary of tags to be saved in the measurement default to None.
         """
-        return {"measurement": measurement, "tags": {**tags, **self.tags}, "time": time, "fields": fields}
+        return {"measurement": measurement, "tags": {**tags, **self.additional_tags}, "time": time, "fields": fields}
 
 
     def last_flush_on_quitting(self):

@@ -10,15 +10,16 @@ def on_locust_init(environment, **_kwargs):
     """
     # this settings matches the given docker-compose file
     influxDBSettings = InfluxDBSettings(
-        influx_host = 'localhost',
-        influx_port = '8086',
+        host = 'localhost',
+        port = '8086',
         user = 'admin',
         pwd = 'pass',
         database = 'test-project',
 
-        # optional global tags to be added to each metric sent to influxdb
-        tags = {
-            'some-global-tag': 'some-global-tag-value',
+        # additional_tags tags to be added to each metric sent to influxdb
+        additional_tags = {
+            'environment': 'test',
+            'some_other_tag': 'tag_value',
         }
     )
     # start listerner with the given configuration
@@ -35,14 +36,15 @@ class TestWebUser(HttpUser):
             if response.status_code != 200:
                 response.failure("Got wrong response")
     
-    @tag('connectors')
+    # purposely fail finding the text
+    @tag('about_page')
     @task(1)
-    def workfront_connector(self):
-        with self.client.get("/connectors/workfront", catch_response=True) as response:
-            if 'Do More Work, Faster' not in response.text:
-                response.failure("Expected test was not displayed")
+    def about_page(self):
+        with self.client.get("/about", catch_response=True) as response:
+            if 'native nicaraguan' not in response.text:
+                response.failure("Expected text was not displayed")
             
-    
+    # method
     def on_start(self):
         print('New user was spawned')
        
