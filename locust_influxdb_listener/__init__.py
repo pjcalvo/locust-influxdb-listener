@@ -31,6 +31,8 @@ class InfluxDBSettings:
         ssl: bool = False,
         verify_ssl: bool = False,
         additional_tags: dict = {},
+        influx_host: Optional[str] = 'localhost', 
+        influx_port: Optional[int] = 8086, 
     ):
         """
         Initialize the InfluxDBSettings object with provided or default settings.
@@ -45,8 +47,8 @@ class InfluxDBSettings:
         :param verify_ssl: Verify SSL certificates (only if SSL is enabled).
         :param additional_tags: Additional tags to include in global data points.
         """
-        self.host = host  # Renamed from influx_host
-        self.port = port  # Renamed from influx_port
+        self.host = host if host else influx_host  # Renamed from influx_host
+        self.port = port if port else influx_port  # Renamed from influx_port
         self.user = user
         self.pwd = pwd
         self.database = database
