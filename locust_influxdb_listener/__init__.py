@@ -106,7 +106,7 @@ class InfluxDBListener:
             # TODO: Get real ID of slaves form locust somehow
             self.node_id = 'worker'
 
-        # start background event to push data to influx
+        # start background event to push data to influxdb
         self.flush_worker = gevent.spawn(self.__flush_cached_points_worker)
         self.test_start(0)
         
