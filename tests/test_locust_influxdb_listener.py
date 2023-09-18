@@ -27,7 +27,9 @@ class TestInfluxDBListener(unittest.TestCase):
         # Create a mock InfluxDBClient
         influxdb_client = Mock(spec=InfluxDBClient)
         
+        listener: InfluxDBListener
         # Create an InfluxDBListener instance
+        # this line raises an Exception if not run along with influxDB, but it won't matter for now
         listener = InfluxDBListener(self.env, self.influx_settings)
         listener.influxdb_client = influxdb_client
 
