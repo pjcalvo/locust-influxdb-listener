@@ -14,7 +14,12 @@ def on_locust_init(environment, **_kwargs):
         influx_port = '8086',
         user = 'admin',
         pwd = 'pass',
-        database = 'test-project'
+        database = 'test-project',
+
+        # optional global tags to be added to each metric sent to influxdb
+        tags = {
+            'some-global-tag': 'some-global-tag-value',
+        }
     )
     # start listerner with the given configuration
     InfluxDBListener(env=environment, influxDbSettings=influxDBSettings)

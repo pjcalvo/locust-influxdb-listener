@@ -27,7 +27,8 @@ class InfluxDBSettings:
         interval_ms: int = 1000,
         ssl: bool = False,
         verify_ssl: bool = False,
-        create_database: bool = False
+        create_database: bool = False,
+        tags: dict = {}
     ):
         self.influx_host = influx_host
         self.influx_port = influx_port
@@ -38,12 +39,14 @@ class InfluxDBSettings:
         self.ssl = ssl
         self.verify_ssl = verify_ssl
         self.create_database = create_database
+        self.tags = tags
         
 
 class InfluxDBListener: 
     """
     Events listener that writes locust events to the given influxdb connection
     """
+    tags : dict
     
     def __init__(
         self,
@@ -56,6 +59,7 @@ class InfluxDBListener:
         self.cache = []
         self.stop_flag = False
         self.interval_ms = influxDbSettings.interval_ms
+        self.tags = influxDbSettings.tags
         # influxdb settings 
         try:
             self.influxdb_client = InfluxDBClient(
@@ -129,8 +133,7 @@ class InfluxDBListener:
         """
 
         time = datetime.utcnow()
-        tags = {
-        }
+        tags = self.tags
         fields = {
             'node_id': node_id,
             'event': event,
@@ -184,9 +187,7 @@ class InfluxDBListener:
         """
 
         time = datetime.utcnow()
-        tags = {
-            'exception_tag': repr(exception)
-        }
+        tags = {**{'exception_tag': repr(exception)}, **self.tags}
         fields = {
             'node_id': node_id,
             'user_instance': repr(user_instance),
@@ -217,7 +218,7 @@ class InfluxDBListener:
         :param fields: Dictionary of field to be saved to measurement.
         :param time: The time os this point.
         """
-        return {"measurement": measurement, "tags": tags, "time": time, "fields": fields}
+        return {"measurement": measurement, "tags": {**tags, **self.tags}, "time": time, "fields": fields}
 
 
     def last_flush_on_quitting(self):
