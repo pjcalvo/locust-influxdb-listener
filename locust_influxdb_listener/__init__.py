@@ -10,8 +10,9 @@ import gevent
 from influxdb import InfluxDBClient
 from requests import Response
 from requests.exceptions import HTTPError
-import locust.env
 from urllib3 import HTTPConnectionPool
+from locust.env import Environment
+from locust import User
 
 log = logging.getLogger('locust_influxdb_listener')
 
@@ -67,7 +68,7 @@ class InfluxDBListener:
 
     def __init__(
         self,
-        env: locust.env.Environment,
+        env: Environment,
         influxDbSettings: InfluxDBSettings
     ):
         """
@@ -96,9 +97,8 @@ class InfluxDBListener:
             # database is mandatory so we should always try to create it
             self.influxdb_client.create_database(influxDbSettings.database)
             self.influxdb_client.switch_database(influxDbSettings.database)
-        
-        # Catching too general exception.
-        # Need more info about default exceptions to catch
+
+
         except Exception as ex:
             logging.error(f'Unexpected error: {ex}')
             return
@@ -150,12 +150,12 @@ class InfluxDBListener:
     def test_start(self, user_count: int) -> None:
         self.__register_event(self.node_id, 0, 'test_started')
 
-    def test_stop(self, user_count: int = 0, environment: any = None) -> None:
+    def test_stop(self, user_count: int = 0, environment: Environment = None) -> None:
         self.__register_event(self.node_id, 0, 'test_stopped')
     
     def user_error(self,
             # need review
-            user_instance: locust.User,
+            user_instance: User,
             exception: Exception,
             tb: TracebackType,
             **_kwargs
