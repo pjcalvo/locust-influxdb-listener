@@ -32,15 +32,16 @@ def on_locust_init(environment, **_kwargs):
     """
     # this settings matches the given docker-compose file
     influxDBSettings = InfluxDBSettings(
-        influx_host = 'localhost',
-        influx_port = '8086',
+        host = 'localhost',
+        port = '8086',
         user = 'admin',
         pwd = 'pass',
         database = 'test-project'
         
         # optional global tags to be added to each metric sent to influxdb
-        tags = {
-            'some-global-tag': 'some-global-tag-value',
+        additional_tags = {
+            'environment': 'test',
+            'some_other_tag': 'tag_value',
         }
     )
     # start listerner with the given configuration
