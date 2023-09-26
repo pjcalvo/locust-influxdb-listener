@@ -45,7 +45,7 @@ class InfluxDBSettings:
         :param interval_ms: Data sending interval in milliseconds.
         :param ssl: Enable SSL/TLS for secure data transmission.
         :param verify_ssl: Verify SSL certificates (only if SSL is enabled).
-        :param additional_tags: Additional tags to include in global data points.
+        :param additional_tags: Additional tags to include in globally for all data points.
         """
         self.host = host if host else influx_host  # Renamed from influx_host
         self.port = port if port else influx_port  # Renamed from influx_port
