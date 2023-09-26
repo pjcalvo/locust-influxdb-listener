@@ -8,7 +8,6 @@ import logging
 import atexit
 import gevent
 from influxdb import InfluxDBClient
-from requests import Response
 from requests.exceptions import HTTPError
 from urllib3 import HTTPConnectionPool
 from locust.env import Environment
@@ -133,7 +132,7 @@ class InfluxDBListener:
             name: str,
             response_time: int,
             response_length: int,
-            response: Response | HTTPConnectionPool, # need review
+            response: any,
             context: any,
             exception: Exception | HTTPError,
             start_time: Optional[datetime] = None,
@@ -199,8 +198,8 @@ class InfluxDBListener:
             name: str,
             response_time: int,
             response_length: int,
-            response: Response | HTTPConnectionPool,
-            context: any, 
+            response: any,
+            context: any,
             exception: Exception | HTTPError,
             start_time: datetime,
             url: str
