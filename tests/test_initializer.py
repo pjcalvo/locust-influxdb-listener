@@ -35,8 +35,8 @@ class TestInfluxDBListener(unittest.TestCase):
             influx_port=8000,
         )
 
-        self.assertEqual(influx_settings.host, 'localhost')
-        self.assertEqual(influx_settings.port, 8086)
+        self.assertEqual(influx_settings.host, 'this_host')
+        self.assertEqual(influx_settings.port, 8000)
 
 
 if __name__ == '__main__':

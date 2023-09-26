@@ -47,8 +47,8 @@ class InfluxDBSettings:
         :param verify_ssl: Verify SSL certificates (only if SSL is enabled).
         :param additional_tags: Additional tags to include in globally for all data points.
         """
-        self.host = host if host else influx_host  # Renamed from influx_host
-        self.port = port if port else influx_port  # Renamed from influx_port
+        self.host = influx_host if influx_host else host  # Renamed from influx_host
+        self.port = influx_port if influx_port else port  # Renamed from influx_port
         self.user = user
         self.pwd = pwd
         self.database = database
@@ -208,7 +208,7 @@ class InfluxDBListener:
         """
 
         time = datetime.utcnow()
-        tags = {**{'exception_tag': repr(exception)}, **self.tags}
+        tags = {**{'exception_tag': repr(exception)}, **self.additional_tags}
         fields = {
             'node_id': node_id,
             'user_instance': repr(user_instance),
