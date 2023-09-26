@@ -239,7 +239,7 @@ class InfluxDBListener:
     def __listen_for_locust_errors(
             self,
             node_id: str,
-            user_instance: any,
+            user_instance: User,
             exception: Exception = None,
             tb: TracebackType = None
         ) -> None:
