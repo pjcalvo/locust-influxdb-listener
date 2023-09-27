@@ -1,6 +1,6 @@
 import sys
 from types import TracebackType
-from typing import Optional, Dict
+from typing import Optional, Dict, Union
 from datetime import datetime
 import traceback
 import logging
@@ -134,7 +134,7 @@ class InfluxDBListener:
             response_length: int,
             response: any,
             context: any,
-            exception: Exception | HTTPError,
+            exception: Union[Exception, HTTPError],
             start_time: Optional[datetime] = None,
             url: Optional[str] = None
             ) -> None:
@@ -200,7 +200,7 @@ class InfluxDBListener:
             response_length: int,
             response: any,
             context: any,
-            exception: Exception | HTTPError,
+            exception: Union[Exception, HTTPError],
             start_time: datetime,
             url: str
         ) -> None:
