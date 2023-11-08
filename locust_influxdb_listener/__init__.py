@@ -143,7 +143,7 @@ class InfluxDBListener:
             response_length, response, context, exception, start_time, url)
 
     def spawning_complete(self, user_count: int) -> None:
-        self.__register_event(self.node_id, user_count, 'spawning_complete')
+        self.__register_event(self.node_id, 'spawning_complete')
         return True
 
     def test_start(self, user_count: int) -> None:
