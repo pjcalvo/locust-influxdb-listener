@@ -142,14 +142,14 @@ class InfluxDBListener:
             self.node_id, 'locust_requests', request_type, name, response_time,
             response_length, response, context, exception, start_time, url)
 
-    def spawning_complete(self) -> None:
+    def spawning_complete(self, user_count: int) -> None:
         self.__register_event(self.node_id, 'spawning_complete')
         return True
 
-    def test_start(self) -> None:
+    def test_start(self, user_count: int) -> None:
         self.__register_event(self.node_id, 'test_started')
 
-    def test_stop(self) -> None:
+    def test_stop(self, user_count: int, environment: Environment = None) -> None:
         self.__register_event(self.node_id, 'test_stopped')
     
     def user_error(self,
