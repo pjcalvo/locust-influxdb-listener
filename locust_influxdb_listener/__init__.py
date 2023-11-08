@@ -168,13 +168,11 @@ class InfluxDBListener:
     def __register_event(
             self,
             node_id: str,
-            user_count: int,
             event: str,
             **_kwargs
         ) -> None:
         """
         Persist locust event such as hatching started or stopped to influxdb.
-        Append user_count in case that it exists
         :param node_id: The id of the node reporting the event.
         :param event: The event name or description.
         """
@@ -183,7 +181,6 @@ class InfluxDBListener:
         fields = {
             'node_id': node_id,
             'event': event,
-            'user_count': user_count
         }
 
         point = self.__make_data_point('locust_events', fields, time)
@@ -231,7 +228,6 @@ class InfluxDBListener:
             'response_time': response_time,
             'response_length': response_length,
             'counter': self.env.stats.num_requests,  # TODO: Review the need of this field
-            'user_count': self.env.runner.user_count
         }
         point = self.__make_data_point(measurement, fields, time, tags=tags)
         self.cache.append(point)
@@ -287,9 +283,10 @@ class InfluxDBListener:
         :param time: The time os this point.
         :param tags: Dictionary of tags to be saved in the measurement default to None.
         """
+        user_count = self.env.runner.user_count
         return {
             "measurement": measurement, 
-            "tags": {**tags, **self.additional_tags}, 
+            "tags": {**tags, **self.additional_tags, 'user_count': user_count},
             "time": time, 
             "fields": fields
             }
