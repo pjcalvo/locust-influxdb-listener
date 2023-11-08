@@ -283,7 +283,7 @@ class InfluxDBListener:
         :param time: The time os this point.
         :param tags: Dictionary of tags to be saved in the measurement default to None.
         """
-        user_count = self.env.runner.user_count
+        user_count = self.env.runner.user_count if self.env.runner else 0
         return {
             "measurement": measurement, 
             "tags": {**tags, **self.additional_tags, 'user_count': user_count},
