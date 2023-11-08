@@ -149,7 +149,7 @@ class InfluxDBListener:
     def test_start(self, user_count: int) -> None:
         self.__register_event(self.node_id, 'test_started')
 
-    def test_stop(self, user_count: int, environment: Environment = None) -> None:
+    def test_stop(self, user_count: int = 0, environment: Environment = None) -> None:
         self.__register_event(self.node_id, 'test_stopped')
     
     def user_error(self,
