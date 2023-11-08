@@ -147,10 +147,10 @@ class InfluxDBListener:
         return True
 
     def test_start(self) -> None:
-        self.__register_event(self.node_id, 0, 'test_started')
+        self.__register_event(self.node_id, 'test_started')
 
     def test_stop(self) -> None:
-        self.__register_event(self.node_id, 0, 'test_stopped')
+        self.__register_event(self.node_id, 'test_stopped')
     
     def user_error(self,
             # need review
@@ -162,7 +162,7 @@ class InfluxDBListener:
         self.__listen_for_locust_errors(self.node_id, user_instance, exception, tb)
 
     def quitting(self, **_kwargs) -> None:
-        self.__register_event(self.node_id, 0, 'quitting')
+        self.__register_event(self.node_id, 'quitting')
         self.last_flush_on_quitting()
 
     def __register_event(
